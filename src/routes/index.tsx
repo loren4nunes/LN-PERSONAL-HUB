@@ -216,95 +216,64 @@ function Index() {
             Escolha o nível de acompanhamento ideal para o seu objetivo.
           </p>
         </div>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <article className="flex flex-col border border-white/10 p-8">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-lime">
-              Essencial
-            </span>
-            <h3 className="mt-2 text-2xl font-bold">Start</h3>
+        <div className="grid gap-8 md:grid-cols-2">
+          <article className="flex flex-col border border-white/10 p-10">
+            <h3 className="font-medium text-foreground">Essencial</h3>
             <div className="my-6 flex items-baseline gap-1">
               <span className="text-3xl font-black tracking-tighter">
-                R$ 297
+                R$ 290
               </span>
               <span className="text-sm text-muted-foreground">/mês</span>
             </div>
             <ul className="mb-10 flex-grow space-y-4 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">✓ Treino via app</li>
-              <li className="flex items-center gap-2">
-                ✓ Vídeos explicativos
+              <li className="flex items-center gap-3">
+                <span className="text-brand-lime">✓</span> Treino mensal via
+                app
               </li>
-              <li className="flex items-center gap-2">
-                ✓ Suporte por chat (48h)
+              <li className="flex items-center gap-3">
+                <span className="text-brand-lime">✓</span> Vídeos explicativos
+                de cada exercício
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="text-brand-lime">✓</span> Suporte via chat
+                (48h)
               </li>
             </ul>
             <a
               href="#contato"
-              className="w-full border border-white/20 py-3 text-center text-xs font-bold uppercase tracking-widest transition-colors hover:bg-white/10"
+              className="w-full rounded-xl border border-white/20 py-3 text-center text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:bg-white/10"
             >
-              Escolher Plano
+              Assinar Plano
             </a>
           </article>
 
-          <article className="relative flex flex-col border-2 border-brand-lime p-8">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-brand-lime px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-dark">
-              Mais Popular
+          <article className="relative flex flex-col overflow-hidden rounded-3xl bg-brand-lime p-10 ring-1 ring-white/20">
+            <div className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+              Mais Procurado
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-lime">
-              Performance
-            </span>
-            <h3 className="mt-2 text-2xl font-bold">Pro</h3>
+            <h3 className="font-medium text-brand-dark">Premium Individual</h3>
             <div className="my-6 flex items-baseline gap-1">
-              <span className="text-3xl font-black tracking-tighter">
-                R$ 497
+              <span className="text-3xl font-black tracking-tighter text-brand-dark">
+                R$ 550
               </span>
-              <span className="text-sm text-muted-foreground">/mês</span>
+              <span className="text-sm text-brand-dark/60">/mês</span>
             </div>
-            <ul className="mb-10 flex-grow space-y-4 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                ✓ Ajuste semanal de carga
+            <ul className="mb-10 flex-grow space-y-4 text-sm text-brand-dark/80">
+              <li className="flex items-center gap-3">
+                <span>✓</span> Ajuste semanal de carga
               </li>
-              <li className="flex items-center gap-2">
-                ✓ Análise de vídeo da execução
+              <li className="flex items-center gap-3">
+                <span>✓</span> Análise de vídeo da execução
               </li>
-              <li className="flex items-center gap-2">
-                ✓ WhatsApp direto e prioritário
+              <li className="flex items-center gap-3">
+                <span>✓</span> WhatsApp direto e suporte prioritário
               </li>
             </ul>
             <a
               href="#contato"
-              className="w-full bg-brand-lime py-3 text-center text-xs font-bold uppercase tracking-widest text-brand-dark transition-transform hover:scale-[1.02]"
+              className="w-full rounded-xl bg-brand-dark py-3 text-center text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-brand-dark/90"
             >
-              Começar Agora
-            </a>
-          </article>
-
-          <article className="flex flex-col border border-white/10 p-8">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-lime">
-              Elite
-            </span>
-            <h3 className="mt-2 text-2xl font-bold">VIP</h3>
-            <div className="my-6 flex items-baseline gap-1">
-              <span className="text-3xl font-black tracking-tighter">
-                R$ 897
-              </span>
-              <span className="text-sm text-muted-foreground">/mês</span>
-            </div>
-            <ul className="mb-10 flex-grow space-y-4 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                ✓ Planejamento trimestral
-              </li>
-              <li className="flex items-center gap-2">
-                ✓ Calls semanais de 30 min
-              </li>
-              <li className="flex items-center gap-2">
-                ✓ Protocolo nutricional completo
-              </li>
-            </ul>
-            <a
-              href="#contato"
-              className="w-full border border-white/20 py-3 text-center text-xs font-bold uppercase tracking-widest transition-colors hover:bg-white/10"
-            >
-              Escolher Plano
+              Começar Jornada
             </a>
           </article>
         </div>
