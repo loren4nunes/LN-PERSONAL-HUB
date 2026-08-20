@@ -72,10 +72,11 @@
   --radius: 0.625rem;
 
   /* High-performance dark theme as default */
-  --brand-lime: #d4ff00;
-  --brand-dark: #0a0a0a;
-  --brand-card: #161616;
-  --brand-lime-muted: #d4ff00cc;
+  --brand-lime: #2fbf6b;
+  --brand-dark: #0a0f0c;
+  --brand-card: #14201a;
+  --brand-lime-muted: #2fbf6bcc;
+
 
   --background: #0a0a0a;
   --foreground: #fafafa;
