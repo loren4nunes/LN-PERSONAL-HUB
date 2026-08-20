@@ -1,32 +1,33 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
+import logo from "@/assets/logo-lorena.png.asset.json";
 import heroTraining from "@/assets/hero-training.jpg";
 import results01 from "@/assets/results-01.jpg";
 import results02 from "@/assets/results-02.jpg";
 import results03 from "@/assets/results-03.jpg";
 import results04 from "@/assets/results-04.jpg";
 
+const WHATSAPP = "https://wa.me/5565996392871";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title:
-          "AXON Performance Humana | Consultoria Online de Personal Trainer",
+        title: "Lorena Nunes | Consultoria Online e Treino Avulso",
       },
       {
         name: "description",
         content:
-          "Consultoria online de alta performance. Planilhas personalizadas, análise técnica por vídeo e suporte direto via WhatsApp para quem busca resultados reais.",
+          "Consultoria online de personal trainer com Lorena Nunes (CREF 011334). Acompanhamento mensal a distância e planos de treino avulso com duração de 2 meses.",
       },
       {
         property: "og:title",
-        content:
-          "AXON Performance Humana | Consultoria Online de Personal Trainer",
+        content: "Lorena Nunes | Consultoria Online e Treino Avulso",
       },
       {
         property: "og:description",
         content:
-          "Consultoria online de alta performance. Planilhas personalizadas, análise técnica por vídeo e suporte direto via WhatsApp.",
+          "Acompanhamento online mensal e plano de treino avulso personalizados para a sua rotina e seus objetivos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,117 +40,137 @@ function Index() {
   return (
     <div className="min-h-screen bg-background font-outfit text-foreground">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-8 md:px-12">
-        <div className="text-2xl font-black tracking-tighter">
-          AXON<span className="text-brand-lime">.</span>
+      <header className="flex items-center justify-between px-6 py-6 md:px-12">
+        <div className="flex items-center gap-3">
+          <img
+            src={logo.url}
+            alt="Logo Lorena Nunes Personal Trainer"
+            width={559}
+            height={400}
+            className="h-9 w-auto"
+          />
+          <div className="leading-none">
+            <div className="text-sm font-bold uppercase tracking-[0.25em]">
+              Lorena Nunes
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-brand-lime">
+              Personal Trainer
+            </div>
+          </div>
         </div>
         <nav className="hidden items-center gap-8 text-sm font-medium uppercase tracking-widest md:flex">
-          <a
-            href="#metodologia"
-            className="transition-colors hover:text-brand-lime"
-          >
-            Metodologia
+          <a href="#como-funciona" className="transition-colors hover:text-brand-lime">
+            Como funciona
           </a>
-          <a
-            href="#planos"
-            className="transition-colors hover:text-brand-lime"
-          >
+          <a href="#planos" className="transition-colors hover:text-brand-lime">
             Planos
           </a>
-          <a
-            href="#resultados"
-            className="transition-colors hover:text-brand-lime"
-          >
+          <a href="#resultados" className="transition-colors hover:text-brand-lime">
             Resultados
           </a>
         </nav>
         <a
-          href="#contato"
-          className="border border-brand-lime px-6 py-2 text-xs font-bold uppercase tracking-widest text-brand-lime transition-all hover:bg-brand-lime hover:text-brand-dark"
+          href="#planos"
+          className="border border-brand-lime px-5 py-2 text-xs font-bold uppercase tracking-widest text-brand-lime transition-all hover:bg-brand-lime hover:text-brand-dark"
         >
-          Começar Agora
+          Começar
         </a>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="grid items-center gap-12 px-6 py-12 md:grid-cols-2 md:px-12 md:py-24">
         <div className="relative z-10">
-          <h1 className="text-balance text-6xl font-black uppercase italic leading-[0.9] tracking-tighter md:text-8xl">
-            Treine <br />
-            <span className="text-brand-lime">Sem Limites</span> <br />
-            Geográficos.
+          <div className="mb-6 inline-block border border-brand-lime/40 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-lime">
+            Consultoria Online · CREF 011334
+          </div>
+          <h1 className="text-balance text-5xl font-black uppercase italic leading-[0.9] tracking-tighter md:text-7xl">
+            Treino sob medida <br />
+            <span className="text-brand-lime">onde você estiver</span>
           </h1>
           <p className="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">
-            Consultoria online de alta performance. Planilhas personalizadas,
-            análise técnica por vídeo e suporte direto via WhatsApp para quem
-            busca resultados reais.
+            Acompanhamento online mensal e planos de treino avulso montados para
+            a sua rotina, seu nível e seus objetivos — com ajustes conforme o
+            seu progresso.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
-              href="#contato"
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-brand-lime px-8 py-4 text-sm font-black uppercase text-brand-dark transition-transform hover:scale-105"
             >
-              Quero meu Plano Personalizado
+              Agendar minha avaliação
+            </a>
+            <a
+              href="#planos"
+              className="border border-white/20 px-8 py-4 text-sm font-black uppercase transition-colors hover:bg-white/10"
+            >
+              Ver planos
             </a>
           </div>
         </div>
         <div className="relative">
           <img
             src={heroTraining}
-            alt="Atleta treinando em academia com iluminação dramática"
+            alt="Treino de força com acompanhamento profissional"
             width={800}
             height={1008}
             className="aspect-[4/5] w-full bg-brand-card object-cover outline outline-1 -outline-offset-1 outline-white/5"
             fetchPriority="high"
           />
           <div className="absolute -bottom-6 -left-6 hidden bg-brand-lime p-6 text-brand-dark md:block">
-            <div className="text-4xl font-black italic tracking-tighter">
-              +500
+            <div className="text-3xl font-black italic tracking-tighter">
+              100% online
             </div>
             <div className="text-[10px] font-bold uppercase leading-none tracking-widest">
-              Alunos Transformados
+              Treine em casa, no parque ou na academia
             </div>
           </div>
         </div>
       </section>
 
-      {/* Key Pillars */}
-      <section id="metodologia" className="bg-white/5 px-6 py-24 md:px-12">
+      {/* Como funciona */}
+      <section id="como-funciona" className="bg-white/5 px-6 py-24 md:px-12">
+        <div className="mb-12 max-w-xl">
+          <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
+            Como funciona a <span className="text-brand-lime">consultoria</span>
+          </h2>
+        </div>
         <div className="grid gap-8 md:grid-cols-3">
-          <article className="border-l-2 border-brand-lime bg-brand-card p-8">
-            <div className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-lime">
-              01. Precisão
-            </div>
-            <h3 className="mb-4 text-2xl font-bold">Bio-Individualidade</h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Chega de treinos genéricos. Cada repetição e cada grama de
-              macronutriente é calculada com base nos seus objetivos e rotina.
-            </p>
-          </article>
-          <article className="border-l-2 border-brand-lime bg-brand-card p-8">
-            <div className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-lime">
-              02. Acompanhamento
-            </div>
-            <h3 className="mb-4 text-2xl font-bold">Feedback em Vídeo</h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Envie vídeos da sua execução e receba correções técnicas
-              detalhadas para garantir segurança e máxima eficiência muscular.
-            </p>
-          </article>
-          <article className="border-l-2 border-brand-lime bg-brand-card p-8">
-            <div className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-lime">
-              03. Mobilidade
-            </div>
-            <h3 className="mb-4 text-2xl font-bold">App Exclusivo</h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Seus treinos na palma da mão, com vídeos explicativos, cronômetro
-              integrado e registro de cargas direto no smartphone.
-            </p>
-          </article>
+          {[
+            {
+              n: "01",
+              t: "Avaliação inicial",
+              d: "Conversamos sobre histórico, rotina, limitações e objetivos para definir o ponto de partida ideal.",
+            },
+            {
+              n: "02",
+              t: "Planejamento individualizado",
+              d: "Você recebe o treino montado exclusivamente para você, com vídeos e orientações de execução.",
+            },
+            {
+              n: "03",
+              t: "Acompanhamento e ajustes",
+              d: "Suporte por WhatsApp, correção de execução e evolução das cargas conforme o seu progresso.",
+            },
+          ].map((item) => (
+            <article
+              key={item.n}
+              className="border-l-2 border-brand-lime bg-brand-card p-8"
+            >
+              <div className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-lime">
+                {item.n}
+              </div>
+              <h3 className="mb-4 text-2xl font-bold">{item.t}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {item.d}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
 
-      {/* Results Teaser */}
+      {/* Resultados */}
       <section id="resultados" className="px-6 py-24 md:px-12">
         <div className="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
           <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-6xl">
@@ -157,146 +178,147 @@ function Index() {
             <span className="text-brand-lime">Falam</span>
           </h2>
           <p className="max-w-xs text-sm text-muted-foreground">
-            A transformação não é apenas estética, é uma mudança de mentalidade e
-            saúde.
+            Consistência, técnica e um plano feito para a sua realidade.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <figure className="aspect-[3/4] overflow-hidden bg-brand-card">
-            <img
-              src={results01}
-              alt="Resultado de transformação física masculina"
-              width={704}
-              height={944}
-              loading="lazy"
-              className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-            />
-          </figure>
-          <figure className="aspect-[3/4] overflow-hidden bg-brand-card">
-            <img
-              src={results02}
-              alt="Resultado de transformação física feminina"
-              width={704}
-              height={944}
-              loading="lazy"
-              className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-            />
-          </figure>
-          <figure className="aspect-[3/4] overflow-hidden bg-brand-card">
-            <img
-              src={results03}
-              alt="Resultado de postura e condicionamento físico"
-              width={704}
-              height={944}
-              loading="lazy"
-              className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-            />
-          </figure>
-          <figure className="aspect-[3/4] overflow-hidden bg-brand-card">
-            <img
-              src={results04}
-              alt="Atleta executando levantamento terra com força"
-              width={704}
-              height={944}
-              loading="lazy"
-              className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-            />
-          </figure>
+          {[
+            { src: results01, alt: "Aluno em treino de força" },
+            { src: results02, alt: "Aluna em treino funcional" },
+            { src: results03, alt: "Evolução de postura e condicionamento" },
+            { src: results04, alt: "Execução de levantamento terra" },
+          ].map((img) => (
+            <figure
+              key={img.alt}
+              className="aspect-[3/4] overflow-hidden bg-brand-card"
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={704}
+                height={944}
+                loading="lazy"
+                className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
+              />
+            </figure>
+          ))}
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Planos */}
       <section id="planos" className="bg-brand-card px-6 py-24 md:px-12">
         <div className="mb-16 text-center">
           <h2 className="text-3xl font-black uppercase italic tracking-tighter md:text-5xl">
-            Planos
+            Tabela de Planos
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Escolha o nível de acompanhamento ideal para o seu objetivo.
+            Escolha o formato ideal para a sua rotina e objetivos.
           </p>
         </div>
-        <div className="grid gap-8 md:grid-cols-2">
-          <article className="flex flex-col border border-white/10 p-10">
-            <h3 className="font-medium text-foreground">Essencial</h3>
-            <div className="my-6 flex items-baseline gap-1">
-              <span className="text-3xl font-black tracking-tighter">
-                R$ 290
-              </span>
-              <span className="text-sm text-muted-foreground">/mês</span>
-            </div>
-            <ul className="mb-10 flex-grow space-y-4 text-sm text-muted-foreground">
-              <li className="flex items-center gap-3">
-                <span className="text-brand-lime">✓</span> Treino mensal via
-                app
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-brand-lime">✓</span> Vídeos explicativos
-                de cada exercício
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-brand-lime">✓</span> Suporte via chat
-                (48h)
-              </li>
-            </ul>
-            <a
-              href="#contato"
-              className="w-full rounded-xl border border-white/20 py-3 text-center text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:bg-white/10"
-            >
-              Assinar Plano
-            </a>
-          </article>
 
-          <article className="relative flex flex-col overflow-hidden rounded-3xl bg-brand-lime p-10 ring-1 ring-white/20">
-            <div className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
-              Mais Procurado
+        <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
+          <article className="relative flex flex-col overflow-hidden rounded-3xl bg-brand-lime p-10">
+            <div className="absolute right-4 top-4 rounded-full bg-brand-dark/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-dark">
+              Mais procurado
             </div>
-            <h3 className="font-medium text-brand-dark">Premium Individual</h3>
+            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-dark/70">
+              Acompanhamento Online
+            </h3>
             <div className="my-6 flex items-baseline gap-1">
-              <span className="text-3xl font-black tracking-tighter text-brand-dark">
-                R$ 550
+              <span className="text-4xl font-black tracking-tighter text-brand-dark">
+                R$ 280
               </span>
               <span className="text-sm text-brand-dark/60">/mês</span>
             </div>
             <ul className="mb-10 flex-grow space-y-4 text-sm text-brand-dark/80">
-              <li className="flex items-center gap-3">
-                <span>✓</span> Ajuste semanal de carga
-              </li>
-              <li className="flex items-center gap-3">
-                <span>✓</span> Análise de vídeo da execução
-              </li>
-              <li className="flex items-center gap-3">
-                <span>✓</span> WhatsApp direto e suporte prioritário
-              </li>
+              {[
+                "Avaliação inicial e anamnese completa",
+                "Treino individualizado atualizado mensalmente",
+                "Vídeos e orientações de execução",
+                "Suporte e ajustes conforme o progresso",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-3">
+                  <span className="font-bold">✓</span> {f}
+                </li>
+              ))}
             </ul>
             <a
-              href="#contato"
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full rounded-xl bg-brand-dark py-3 text-center text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-brand-dark/90"
             >
-              Começar Jornada
+              Quero acompanhamento
+            </a>
+          </article>
+
+          <article className="flex flex-col rounded-3xl border border-white/10 p-10">
+            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-lime">
+              Plano de Treino Avulso
+            </h3>
+            <div className="my-6 flex items-baseline gap-1">
+              <span className="text-4xl font-black tracking-tighter">
+                R$ 180
+              </span>
+              <span className="text-sm text-muted-foreground">
+                pagamento único
+              </span>
+            </div>
+            <ul className="mb-6 flex-grow space-y-4 text-sm text-muted-foreground">
+              {[
+                "Plano de treino com duração de 2 meses",
+                "Montado conforme seu objetivo e estrutura disponível",
+                "Orientações de execução, séries e cargas",
+                "Sem mensalidade e sem fidelidade",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-3">
+                  <span className="text-brand-lime">✓</span> {f}
+                </li>
+              ))}
+            </ul>
+            <p className="mb-8 rounded-xl border border-brand-lime/30 bg-brand-lime/10 p-4 text-xs font-bold uppercase leading-relaxed tracking-wide text-brand-lime">
+              Aluno iniciante ganha + 2 semanas de treino de adaptação
+            </p>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-xl border border-white/20 py-3 text-center text-xs font-bold uppercase tracking-widest transition-colors hover:bg-white/10"
+            >
+              Quero meu treino
             </a>
           </article>
         </div>
+
+        <p className="mt-10 text-center text-xs uppercase tracking-widest text-muted-foreground">
+          Todos os planos incluem planejamento individualizado, orientações e
+          ajustes conforme o progresso.
+        </p>
       </section>
 
-      {/* CTA Footer */}
+      {/* CTA / Contato */}
       <footer
         id="contato"
         className="bg-brand-lime px-6 py-16 text-center text-brand-dark md:px-12"
       >
-        <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-7xl">
-          Pronto para o próximo nível?
+        <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-6xl">
+          Vamos começar?
         </h2>
+        <p className="mx-auto mt-4 max-w-lg text-sm font-medium text-brand-dark/80">
+          O primeiro passo é decidir por você e pela sua saúde. Estou aqui para
+          te ajudar a construir uma rotina mais saudável e consistente.
+        </p>
         <a
-          href="https://wa.me/5500000000000"
+          href={WHATSAPP}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-8 inline-block bg-brand-dark px-12 py-5 font-black uppercase tracking-[0.2em] text-white transition-transform hover:scale-105"
         >
-          Falar com Personal Agora
+          WhatsApp (65) 99639-2871
         </a>
         <div className="mt-12 flex flex-col items-center gap-4 border-t border-brand-dark/10 pt-12 text-[10px] font-bold uppercase tracking-widest md:flex-row md:justify-between">
-          <div>© 2026 AXON Performance Humana</div>
+          <div>© 2026 Lorena Nunes · CREF 011334</div>
           <div className="flex gap-6">
             <a
               href="https://instagram.com"
@@ -307,16 +329,13 @@ function Index() {
               Instagram
             </a>
             <a
-              href="https://wa.me/5500000000000"
+              href={WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-70"
             >
               WhatsApp
             </a>
-            <Link to="/" className="hover:opacity-70">
-              Termos
-            </Link>
           </div>
         </div>
       </footer>
