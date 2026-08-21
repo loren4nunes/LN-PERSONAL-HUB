@@ -34,13 +34,18 @@ jobs:
       - name: Compilar site
         run: bun run build
 
+      - name: Preparar fallback
+        run: |
+          cp dist/client/index.html dist/client/404.html
+          touch dist/client/.nojekyll
+
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
 
       - name: Preparar site para publicacao
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.output/public
+          path: ./dist/client
 
   deploy:
     environment:
