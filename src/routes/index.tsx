@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 
 import logo from "@/assets/logo-lorena.png.asset.json";
 import heroTraining from "@/assets/hero-training.jpg";
@@ -169,76 +171,9 @@ function Index() {
         </div>
       </section>
 
-      {/* Sou Aluno */}
+      {/* Sou Aluno / Onboarding */}
       <section id="sou-aluno" className="px-6 py-24 md:px-12">
-        <div className="mx-auto max-w-xl">
-          <div className="mb-10 text-center">
-            <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
-              Área do <span className="text-brand-lime">Aluno</span>
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Acesse seu treino, envie feedbacks e acompanhe sua evolução.
-            </p>
-          </div>
-
-          <form
-            className="space-y-5 rounded-3xl border border-white/10 bg-brand-card p-8 md:p-10"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                E-mail
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="senha"
-                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Senha
-              </label>
-              <input
-                id="senha"
-                type="password"
-                placeholder="••••••••"
-                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-brand-lime py-4 text-sm font-black uppercase tracking-widest text-brand-dark transition-transform hover:scale-[1.02]"
-            >
-              Acessar minha conta
-            </button>
-            <a
-              href={`${WHATSAPP}?text=Oi,%20Lorena!%20Sou%20aluno%20e%20preciso%20de%20suporte.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center text-xs uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
-            >
-              Esqueci minha senha · falar no WhatsApp
-            </a>
-          </form>
-
-          <div className="mt-8 text-center text-xs text-muted-foreground">
-            Aluno novo?{" "}
-            <a
-              href="#planos"
-              className="font-bold uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
-            >
-              Escolha seu plano
-            </a>
-          </div>
-        </div>
+        <OnboardingForm />
       </section>
 
 
@@ -375,6 +310,322 @@ function Index() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+const onboardingSchema = z.object({
+  nome: z.string().trim().min(2, "Informe seu nome completo").max(100),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(10, "Informe um WhatsApp válido com DDD")
+    .max(20),
+  objetivo: z.string().min(1, "Escolha seu principal objetivo"),
+  experiencia: z.string().min(1, "Escolha seu nível de experiência"),
+  diasPorSemana: z.string().min(1, "Escolha quantos dias pode treinar"),
+  tempoPorSessao: z.string().min(1, "Escolha o tempo por sessão"),
+  local: z.string().min(1, "Escolha onde vai treinar"),
+});
+
+type OnboardingData = z.infer<typeof onboardingSchema>;
+
+function OnboardingForm() {
+  const [form, setForm] = useState<OnboardingData>({
+    nome: "",
+    whatsapp: "",
+    objetivo: "",
+    experiencia: "",
+    diasPorSemana: "",
+    tempoPorSessao: "",
+    local: "",
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof OnboardingData, string>>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof OnboardingData]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = onboardingSchema.safeParse(form);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof OnboardingData, string>> = {};
+      result.error.errors.forEach((err) => {
+        const key = err.path[0] as keyof OnboardingData;
+        fieldErrors[key] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    setSubmitted(true);
+
+    const mensagem = [
+      `Oi, Lorena! Me chamo ${form.nome} e quero começar a consultoria online.`,
+      "",
+      "*Respostas do onboarding:*",
+      `Objetivo: ${form.objetivo}`,
+      `Experiência: ${form.experiencia}`,
+      `Disponibilidade: ${form.diasPorSemana} por semana`,
+      `Tempo por sessão: ${form.tempoPorSessao}`,
+      `Local de treino: ${form.local}`,
+      `WhatsApp: ${form.whatsapp}`,
+    ].join("%0A");
+
+    window.open(`${WHATSAPP}?text=${mensagem}`, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="mx-auto max-w-xl">
+      <div className="mb-10 text-center">
+        <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
+          Área do <span className="text-brand-lime">Aluno</span>
+        </h2>
+        <p className="mt-4 text-muted-foreground">
+          Preencha seu perfil de treino para eu montar o plano ideal para você.
+        </p>
+      </div>
+
+      {submitted ? (
+        <div className="rounded-3xl border border-brand-lime/30 bg-brand-lime/10 p-10 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center bg-brand-lime text-brand-dark">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-black uppercase italic tracking-tight">
+            Perfil enviado!
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Você será redirecionado para o WhatsApp da Lorena para finalizar seu
+            plano.
+          </p>
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 rounded-3xl border border-white/10 bg-brand-card p-8 md:p-10"
+          noValidate
+        >
+          <div>
+            <label
+              htmlFor="nome"
+              className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              Nome completo
+            </label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              value={form.nome}
+              onChange={handleChange}
+              placeholder="Seu nome"
+              className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
+            />
+            {errors.nome && (
+              <p className="mt-2 text-xs text-red-400">{errors.nome}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="whatsapp"
+              className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              WhatsApp
+            </label>
+            <input
+              id="whatsapp"
+              name="whatsapp"
+              type="tel"
+              value={form.whatsapp}
+              onChange={handleChange}
+              placeholder="(65) 99999-9999"
+              className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
+            />
+            {errors.whatsapp && (
+              <p className="mt-2 text-xs text-red-400">{errors.whatsapp}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="objetivo"
+              className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              Principal objetivo
+            </label>
+            <select
+              id="objetivo"
+              name="objetivo"
+              value={form.objetivo}
+              onChange={handleChange}
+              className="w-full border-b border-white/10 bg-transparent py-3 text-sm text-foreground focus:border-brand-lime focus:outline-none"
+            >
+              <option value="" disabled>
+                Selecione
+              </option>
+              <option value="Emagrecimento">Emagrecimento</option>
+              <option value="Hipertrofia">Hipertrofia</option>
+              <option value="Condicionamento físico">Condicionamento físico</option>
+              <option value="Saúde e bem-estar">Saúde e bem-estar</option>
+              <option value="Preparação para evento">Preparação para evento</option>
+            </select>
+            {errors.objetivo && (
+              <p className="mt-2 text-xs text-red-400">{errors.objetivo}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="experiencia"
+              className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              Nível de experiência
+            </label>
+            <select
+              id="experiencia"
+              name="experiencia"
+              value={form.experiencia}
+              onChange={handleChange}
+              className="w-full border-b border-white/10 bg-transparent py-3 text-sm text-foreground focus:border-brand-lime focus:outline-none"
+            >
+              <option value="" disabled>
+                Selecione
+              </option>
+              <option value="Iniciante">Iniciante</option>
+              <option value="Intermediário">Intermediário</option>
+              <option value="Avançado">Avançado</option>
+            </select>
+            {errors.experiencia && (
+              <p className="mt-2 text-xs text-red-400">{errors.experiencia}</p>
+            )}
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="diasPorSemana"
+                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+              >
+                Dias por semana
+              </label>
+              <select
+                id="diasPorSemana"
+                name="diasPorSemana"
+                value={form.diasPorSemana}
+                onChange={handleChange}
+                className="w-full border-b border-white/10 bg-transparent py-3 text-sm text-foreground focus:border-brand-lime focus:outline-none"
+              >
+                <option value="" disabled>
+                  Selecione
+                </option>
+                <option value="2 dias">2 dias</option>
+                <option value="3 dias">3 dias</option>
+                <option value="4 dias">4 dias</option>
+                <option value="5 dias">5 dias</option>
+                <option value="6 dias">6 dias</option>
+              </select>
+              {errors.diasPorSemana && (
+                <p className="mt-2 text-xs text-red-400">{errors.diasPorSemana}</p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="tempoPorSessao"
+                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+              >
+                Tempo por sessão
+              </label>
+              <select
+                id="tempoPorSessao"
+                name="tempoPorSessao"
+                value={form.tempoPorSessao}
+                onChange={handleChange}
+                className="w-full border-b border-white/10 bg-transparent py-3 text-sm text-foreground focus:border-brand-lime focus:outline-none"
+              >
+                <option value="" disabled>
+                  Selecione
+                </option>
+                <option value="Até 30 min">Até 30 min</option>
+                <option value="30 a 45 min">30 a 45 min</option>
+                <option value="45 a 60 min">45 a 60 min</option>
+                <option value="Mais de 60 min">Mais de 60 min</option>
+              </select>
+              {errors.tempoPorSessao && (
+                <p className="mt-2 text-xs text-red-400">{errors.tempoPorSessao}</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="local"
+              className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              Local de treino
+            </label>
+            <select
+              id="local"
+              name="local"
+              value={form.local}
+              onChange={handleChange}
+              className="w-full border-b border-white/10 bg-transparent py-3 text-sm text-foreground focus:border-brand-lime focus:outline-none"
+            >
+              <option value="" disabled>
+                Selecione
+              </option>
+              <option value="Em casa">Em casa</option>
+              <option value="Academia">Academia</option>
+              <option value="Parque/área externa">Parque/área externa</option>
+              <option value="Misto">Misto</option>
+            </select>
+            {errors.local && (
+              <p className="mt-2 text-xs text-red-400">{errors.local}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-brand-lime py-4 text-sm font-black uppercase tracking-widest text-brand-dark transition-transform hover:scale-[1.02]"
+          >
+            Enviar meu perfil
+          </button>
+
+          <p className="text-center text-xs text-muted-foreground">
+            Já é aluno?{" "}
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
+            >
+              Falar no WhatsApp
+            </a>
+          </p>
+        </form>
+      )}
     </div>
   );
 }
