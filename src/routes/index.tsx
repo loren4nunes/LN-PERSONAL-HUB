@@ -2,10 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import logo from "@/assets/logo-lorena.png.asset.json";
 import heroTraining from "@/assets/hero-training.jpg";
-import results01 from "@/assets/results-01.jpg";
-import results02 from "@/assets/results-02.jpg";
-import results03 from "@/assets/results-03.jpg";
-import results04 from "@/assets/results-04.jpg";
 
 const WHATSAPP = "https://wa.me/5565996392871";
 
