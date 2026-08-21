@@ -171,75 +171,38 @@ function Index() {
 
       {/* Sou Aluno */}
       <section id="sou-aluno" className="px-6 py-24 md:px-12">
-        <div className="mx-auto max-w-xl">
-          <div className="mb-10 text-center">
-            <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
-              Área do <span className="text-brand-lime">Aluno</span>
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Acesse seu treino, envie feedbacks e acompanhe sua evolução.
-            </p>
+        <div className="mx-auto max-w-xl text-center">
+          <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
+            Sou <span className="text-brand-lime">Aluno</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            Acesse sua conta para ver seu treino, seu plano e sua evolução.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link
+              to="/auth"
+              className="bg-brand-lime px-8 py-4 text-sm font-black uppercase tracking-widest text-brand-dark transition-transform hover:scale-105"
+            >
+              Entrar na minha conta
+            </Link>
+            <Link
+              to="/auth"
+              className="border border-white/20 px-8 py-4 text-sm font-black uppercase tracking-widest transition-colors hover:bg-white/10"
+            >
+              Criar conta
+            </Link>
           </div>
-
-          <form
-            className="space-y-5 rounded-3xl border border-white/10 bg-brand-card p-8 md:p-10"
-            onSubmit={(e) => e.preventDefault()}
+          <a
+            href={`${WHATSAPP}?text=Oi,%20Lorena!%20Sou%20aluno%20e%20preciso%20de%20suporte.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 block text-xs uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
           >
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                E-mail
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="senha"
-                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
-              >
-                Senha
-              </label>
-              <input
-                id="senha"
-                type="password"
-                placeholder="••••••••"
-                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-brand-lime py-4 text-sm font-black uppercase tracking-widest text-brand-dark transition-transform hover:scale-[1.02]"
-            >
-              Acessar minha conta
-            </button>
-            <a
-              href={`${WHATSAPP}?text=Oi,%20Lorena!%20Sou%20aluno%20e%20preciso%20de%20suporte.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center text-xs uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
-            >
-              Esqueci minha senha · falar no WhatsApp
-            </a>
-          </form>
-
-          <div className="mt-8 text-center text-xs text-muted-foreground">
-            Aluno novo?{" "}
-            <a
-              href="#planos"
-              className="font-bold uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
-            >
-              Escolha seu plano
-            </a>
-          </div>
+            Preciso de suporte · falar no WhatsApp
+          </a>
         </div>
       </section>
+
 
 
       {/* Planos */}
