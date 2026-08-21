@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import logo from "@/assets/logo-lorena.png.asset.json";
 import heroTraining from "@/assets/hero-training.jpg";
 
 const WHATSAPP = "https://wa.me/5565996392871";
@@ -39,7 +38,7 @@ function Index() {
       <header className="flex items-center justify-between px-6 py-6 md:px-12">
         <div className="flex items-center gap-3">
           <img
-            src={logo.url}
+            src={`${import.meta.env.BASE_URL}logo-lorena-simbolo`}
             alt="Logo Lorena Nunes Personal Trainer"
             width={559}
             height={400}
