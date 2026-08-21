@@ -32,7 +32,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Compilar site
-        run: bun run build -- --base=/LN-PERSONAL-HUB/
+        run: bun run build
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -40,7 +40,7 @@ jobs:
       - name: Preparar site para publicacao
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./.output/public
 
   deploy:
     environment:
