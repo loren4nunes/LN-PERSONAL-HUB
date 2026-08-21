@@ -2,10 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import logo from "@/assets/logo-lorena.png.asset.json";
 import heroTraining from "@/assets/hero-training.jpg";
-import results01 from "@/assets/results-01.jpg";
-import results02 from "@/assets/results-02.jpg";
-import results03 from "@/assets/results-03.jpg";
-import results04 from "@/assets/results-04.jpg";
 
 const WHATSAPP = "https://wa.me/5565996392871";
 
@@ -245,41 +241,6 @@ function Index() {
         </div>
       </section>
 
-      {/* Resultados */}
-      <section id="resultados" className="px-6 py-24 md:px-12">
-        <div className="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
-          <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-6xl">
-            Resultados que <br />
-            <span className="text-brand-lime">Falam</span>
-          </h2>
-          <p className="max-w-xs text-sm text-muted-foreground">
-            Consistência, técnica e um plano feito para a sua realidade.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            { src: results01, alt: "Aluno em treino de força" },
-            { src: results02, alt: "Aluna em treino funcional" },
-            { src: results03, alt: "Evolução de postura e condicionamento" },
-            { src: results04, alt: "Execução de levantamento terra" },
-          ].map((img) => (
-            <figure
-              key={img.alt}
-              className="aspect-[3/4] overflow-hidden bg-brand-card"
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                width={704}
-                height={944}
-                loading="lazy"
-                className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-              />
-            </figure>
-          ))}
-        </div>
-      </section>
 
       {/* Planos */}
       <section id="planos" className="bg-brand-card px-6 py-24 md:px-12">
