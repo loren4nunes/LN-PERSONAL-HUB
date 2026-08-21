@@ -62,8 +62,8 @@ function Index() {
           <a href="#como-funciona" className="transition-colors hover:text-brand-lime">
             Como funciona
           </a>
-          <a href="#receber-treino" className="transition-colors hover:text-brand-lime">
-            Receber treino
+          <a href="#sou-aluno" className="transition-colors hover:text-brand-lime">
+            Sou aluno
           </a>
           <a href="#planos" className="transition-colors hover:text-brand-lime">
             Planos
