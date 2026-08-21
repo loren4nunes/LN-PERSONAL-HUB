@@ -173,83 +173,75 @@ function Index() {
         </div>
       </section>
 
-      {/* Receber o treino */}
-      <section id="receber-treino" className="px-6 py-24 md:px-12">
-        <div className="mb-12 max-w-2xl">
-          <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
-            Seu treino, <span className="text-brand-lime">na palma da mão</span>
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            Tudo organizado para você não perder tempo na academia e treinar com
-            segurança, mesmo sem eu estar do seu lado.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              t: "Treino enviado no WhatsApp",
-              d: "Planilha ou app com o treino completo, séries, repetições, descanso e observações de execução.",
-            },
-            {
-              t: "Vídeos demonstrativos",
-              d: "Cada exercício acompanha vídeos gravados por mim com a técnica correta e principais erros.",
-            },
-            {
-              t: "Ajustes em tempo real",
-              d: "Mande um áudio ou vídeo durante o treino e eu corrijo a execução ou substituo o exercício.",
-            },
-            {
-              t: "Progressão semanal",
-              d: "Acompanho suas cargas e evolução para aumentar a intensidade no momento certo.",
-            },
-          ].map((item) => (
-            <article
-              key={item.t}
-              className="rounded-2xl border border-white/10 bg-brand-card p-8 transition-colors hover:border-brand-lime/40"
-            >
-              <div className="mb-6 flex h-10 w-10 items-center justify-center bg-brand-lime text-brand-dark">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              </div>
-              <h3 className="mb-3 text-lg font-bold">{item.t}</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {item.d}
-              </p>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col items-center justify-center gap-6 rounded-2xl border border-brand-lime/30 bg-brand-lime/10 p-8 text-center md:flex-row md:text-left">
-          <div className="flex-1">
-            <h3 className="text-xl font-black uppercase italic tracking-tight">
-              Quer ver um exemplo de como vem o treino?
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Entre em contato pelo WhatsApp e peça uma amostra do material que
-              você vai receber.
+      {/* Sou Aluno */}
+      <section id="sou-aluno" className="px-6 py-24 md:px-12">
+        <div className="mx-auto max-w-xl">
+          <div className="mb-10 text-center">
+            <h2 className="text-balance text-4xl font-black uppercase italic tracking-tighter md:text-5xl">
+              Área do <span className="text-brand-lime">Aluno</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Acesse seu treino, envie feedbacks e acompanhe sua evolução.
             </p>
           </div>
-          <a
-            href={WHATSAPP}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-brand-lime px-8 py-4 text-sm font-black uppercase text-brand-dark transition-transform hover:scale-105"
+
+          <form
+            className="space-y-5 rounded-3xl border border-white/10 bg-brand-card p-8 md:p-10"
+            onSubmit={(e) => e.preventDefault()}
           >
-            Pedir amostra no WhatsApp
-          </a>
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+              >
+                E-mail
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="senha"
+                className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground"
+              >
+                Senha
+              </label>
+              <input
+                id="senha"
+                type="password"
+                placeholder="••••••••"
+                className="w-full border-b border-white/10 bg-transparent px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-brand-lime focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-brand-lime py-4 text-sm font-black uppercase tracking-widest text-brand-dark transition-transform hover:scale-[1.02]"
+            >
+              Acessar minha conta
+            </button>
+            <a
+              href={`${WHATSAPP}?text=Oi,%20Lorena!%20Sou%20aluno%20e%20preciso%20de%20suporte.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-center text-xs uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
+            >
+              Esqueci minha senha · falar no WhatsApp
+            </a>
+          </form>
+
+          <div className="mt-8 text-center text-xs text-muted-foreground">
+            Aluno novo?{" "}
+            <a
+              href="#planos"
+              className="font-bold uppercase tracking-widest text-brand-lime transition-colors hover:text-brand-lime/80"
+            >
+              Escolha seu plano
+            </a>
+          </div>
         </div>
       </section>
 
