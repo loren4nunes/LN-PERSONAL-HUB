@@ -6,12 +6,13 @@
 
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
+const isGitHubActions = process.env['GITHUB_ACTIONS'] === "true";
 
 export default defineConfig({
   // GitHub Pages precisa de arquivos estáticos.
   // No Lovable, Nitro continua funcionando normalmente.
-  nitro: isGitHubActions ? false : undefined,
+  ...(isGitHubActions ? { nitro: false as const } : {}),
+
 
   tanstackStart: {
     server: { entry: "server" },
