@@ -178,8 +178,17 @@ function Painel() {
 
 /* ------------------------------- ADMIN ---------------------------------- */
 
+type Aba = "alunos" | "agenda" | "pendentes" | "novos";
+
+function protocoloVencido(a: Profile) {
+  if (a.situacao !== "ativo") return false;
+  if (!a.protocolo_vence_em) return Boolean(a.plano);
+  return a.protocolo_vence_em <= hoje();
+}
+
 function AdminPanel() {
   const queryClient = useQueryClient();
+  const [aba, setAba] = useState<Aba>("alunos");
   const [selecionado, setSelecionado] = useState<string | null>(null);
 
   const alunos = useQuery({
@@ -197,12 +206,31 @@ function AdminPanel() {
   const salvar = useMutation({
     mutationFn: async (p: Partial<Profile> & { id: string }) => {
       const { id, ...campos } = p;
-      const { error } = await supabase.from("profiles").update(campos).eq("id", id);
+      const patch: Record<string, unknown> = { ...campos };
+      if (campos.treino || campos.treino_link) {
+        patch["treino_atualizado_em"] = hoje();
+        patch["protocolo_vence_em"] = addMeses(hoje(), 2);
+      }
+      const { error } = await supabase.from("profiles").update(patch).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alunos"] });
     },
+  });
+
+  const situacaoMut = useMutation({
+    mutationFn: async ({ id, situacao }: { id: string; situacao: string }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          situacao,
+          aprovado_em: situacao === "ativo" ? new Date().toISOString() : null,
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["alunos"] }),
   });
 
   if (alunos.isLoading) {
@@ -217,38 +245,540 @@ function AdminPanel() {
   }
 
   const lista = alunos.data ?? [];
+  const ativos = lista.filter((a) => a.situacao === "ativo");
+  const novos = lista.filter((a) => a.situacao !== "ativo");
+  const pendentes = lista.filter(protocoloVencido);
   const atual = lista.find((a) => a.id === selecionado) ?? null;
 
+  const itens: { id: Aba; label: string; badge?: number }[] = [
+    { id: "alunos", label: "Meus alunos", badge: ativos.length },
+    { id: "agenda", label: "Agenda" },
+    { id: "pendentes", label: "Treinos pendentes", badge: pendentes.length },
+    { id: "novos", label: "Novos alunos", badge: novos.length },
+  ];
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[340px_1fr]">
-      <div className="space-y-3">
-        <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          {lista.length} aluno(s)
-        </div>
-        {lista.length === 0 && (
-          <p className="rounded-2xl border border-white/10 bg-brand-card p-6 text-sm text-muted-foreground">
-            Nenhum aluno cadastrado ainda. Assim que alguém criar conta na Área
-            do Aluno, aparece aqui.
-          </p>
-        )}
-        {lista.map((a) => (
+    <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+      <nav className="space-y-2 lg:sticky lg:top-10 lg:self-start">
+        {itens.map((i) => (
           <button
-            key={a.id}
-            onClick={() => setSelecionado(a.id)}
-            className={`w-full rounded-2xl border p-5 text-left transition-colors ${
-              a.id === selecionado
-                ? "border-brand-lime bg-brand-lime/10"
-                : "border-white/10 bg-brand-card hover:border-white/25"
+            key={i.id}
+            onClick={() => setAba(i.id)}
+            className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left text-xs font-black uppercase tracking-widest transition-colors ${
+              aba === i.id
+                ? "border-brand-lime bg-brand-lime/10 text-brand-lime"
+                : "border-white/10 bg-brand-card text-muted-foreground hover:border-white/25"
             }`}
           >
-            <div className="text-sm font-bold">{a.nome || a.email}</div>
-            <div className="mt-1 text-xs text-muted-foreground">{a.email}</div>
-            <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-widest">
-              <span className="border border-white/15 px-2 py-1 text-muted-foreground">
-                {a.plano || "sem plano"}
-              </span>
+            <span>{i.label}</span>
+            {i.badge ? (
               <span
-                className={`px-2 py-1 ${
+                className={`rounded-full px-2 py-0.5 text-[10px] ${
+                  aba === i.id
+                    ? "bg-brand-lime text-brand-dark"
+                    : "bg-white/10 text-foreground"
+                }`}
+              >
+                {i.badge}
+              </span>
+            ) : null}
+          </button>
+        ))}
+      </nav>
+
+      <div className="min-w-0">
+        {aba === "alunos" && (
+          <div className="grid gap-8 xl:grid-cols-[320px_1fr]">
+            <ListaAlunos
+              lista={ativos}
+              selecionado={selecionado}
+              onSelecionar={setSelecionado}
+              vazio="Nenhum aluno ativo ainda. Aprove os novos alunos na aba Novos alunos."
+            />
+            <div>
+              {atual && atual.situacao === "ativo" ? (
+                <AlunoEditor
+                  key={atual.id}
+                  aluno={atual}
+                  salvando={salvar.isPending}
+                  onSalvar={(campos) => salvar.mutate({ id: atual.id, ...campos })}
+                />
+              ) : (
+                <p className="rounded-3xl border border-white/10 bg-brand-card p-8 text-sm text-muted-foreground">
+                  Selecione um aluno para ver e editar plano, pagamento, treino e
+                  anotações.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {aba === "agenda" && <AgendaView alunos={ativos} />}
+
+        {aba === "pendentes" && (
+          <PendentesView
+            pendentes={pendentes}
+            salvando={salvar.isPending}
+            onSalvar={(id, campos) => salvar.mutate({ id, ...campos })}
+          />
+        )}
+
+        {aba === "novos" && (
+          <NovosView
+            novos={novos}
+            salvando={situacaoMut.isPending}
+            onSituacao={(id, situacao) => situacaoMut.mutate({ id, situacao })}
+            onPagamento={(id, status) =>
+              salvar.mutate({ id, status_pagamento: status })
+            }
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ListaAlunos({
+  lista,
+  selecionado,
+  onSelecionar,
+  vazio,
+}: {
+  lista: Profile[];
+  selecionado: string | null;
+  onSelecionar: (id: string) => void;
+  vazio: string;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        {lista.length} aluno(s)
+      </div>
+      {lista.length === 0 && (
+        <p className="rounded-2xl border border-white/10 bg-brand-card p-6 text-sm text-muted-foreground">
+          {vazio}
+        </p>
+      )}
+      {lista.map((a) => (
+        <button
+          key={a.id}
+          onClick={() => onSelecionar(a.id)}
+          className={`w-full rounded-2xl border p-5 text-left transition-colors ${
+            a.id === selecionado
+              ? "border-brand-lime bg-brand-lime/10"
+              : "border-white/10 bg-brand-card hover:border-white/25"
+          }`}
+        >
+          <div className="text-sm font-bold">{a.nome || a.email}</div>
+          <div className="mt-1 text-xs text-muted-foreground">{a.email}</div>
+          <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-widest">
+            <span className="border border-white/15 px-2 py-1 text-muted-foreground">
+              {a.plano || "sem plano"}
+            </span>
+            <span
+              className={`px-2 py-1 ${
+                a.status_pagamento === "pago"
+                  ? "bg-brand-lime text-brand-dark"
+                  : "border border-white/15 text-muted-foreground"
+              }`}
+            >
+              {a.status_pagamento}
+            </span>
+            {protocoloVencido(a) && (
+              <span className="bg-red-500/20 px-2 py-1 text-red-300">
+                protocolo vencido
+              </span>
+            )}
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------- AGENDA --------------------------------- */
+
+function AgendaView({ alunos }: { alunos: Profile[] }) {
+  const queryClient = useQueryClient();
+  const [dia, setDia] = useState(hoje());
+  const [form, setForm] = useState({
+    titulo: "",
+    tipo: "treino",
+    student_id: "",
+    hora: "07:00",
+    observacoes: "",
+  });
+
+  const compromissos = useQuery({
+    queryKey: ["appointments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("*")
+        .order("inicio", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Appointment[];
+    },
+  });
+
+  const frequencia = useQuery({
+    queryKey: ["attendance"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("attendance")
+        .select("*")
+        .order("data", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as Attendance[];
+    },
+  });
+
+  const criar = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("appointments").insert({
+        titulo: form.titulo.trim(),
+        tipo: form.tipo,
+        student_id: form.student_id || null,
+        inicio: new Date(`${dia}T${form.hora}:00`).toISOString(),
+        observacoes: form.observacoes.trim() || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setForm({ ...form, titulo: "", observacoes: "" });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
+  });
+
+  const remover = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("appointments").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
+  });
+
+  const marcar = useMutation({
+    mutationFn: async ({
+      studentId,
+      presente,
+    }: {
+      studentId: string;
+      presente: boolean;
+    }) => {
+      const { error } = await supabase
+        .from("attendance")
+        .upsert(
+          { student_id: studentId, data: dia, presente },
+          { onConflict: "student_id,data" },
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["attendance"] }),
+  });
+
+  const doDia = (compromissos.data ?? []).filter(
+    (c) => c.inicio.slice(0, 10) === dia,
+  );
+  const presencas = frequencia.data ?? [];
+  const inicioMes = dia.slice(0, 8) + "01";
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-3xl border border-white/10 bg-brand-card p-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-lime">
+              Agenda
+            </h2>
+            <p className="mt-2 text-2xl font-black uppercase italic tracking-tighter">
+              {fmtData(dia)}
+            </p>
+          </div>
+          <input
+            type="date"
+            value={dia}
+            onChange={(e) => setDia(e.target.value)}
+            className="border-b border-white/10 bg-transparent py-2 text-sm focus:border-brand-lime focus:outline-none"
+          />
+        </div>
+
+        <ul className="mt-6 space-y-3">
+          {doDia.length === 0 && (
+            <li className="text-sm text-muted-foreground">
+              Nenhum compromisso neste dia.
+            </li>
+          )}
+          {doDia.map((c) => {
+            const aluno = alunos.find((a) => a.id === c.student_id);
+            return (
+              <li
+                key={c.id}
+                className="flex items-start justify-between gap-4 rounded-2xl border border-white/10 p-4"
+              >
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-brand-lime">
+                    {new Date(c.inicio).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    · {c.tipo}
+                  </div>
+                  <div className="mt-1 text-sm font-bold">{c.titulo}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {aluno ? aluno.nome || aluno.email : "Sem aluno vinculado"}
+                    {c.observacoes ? ` · ${c.observacoes}` : ""}
+                  </div>
+                </div>
+                <button
+                  onClick={() => remover.mutate(c.id)}
+                  className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-red-400"
+                >
+                  Excluir
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-8 grid gap-5 border-t border-white/10 pt-6 md:grid-cols-2">
+          <Campo
+            label="Título do compromisso"
+            value={form.titulo}
+            onChange={(v) => setForm({ ...form, titulo: v })}
+            placeholder="Treino presencial / Avaliação"
+          />
+          <Campo
+            label="Hora"
+            type="time"
+            value={form.hora}
+            onChange={(v) => setForm({ ...form, hora: v })}
+          />
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Aluno
+            </label>
+            <select
+              value={form.student_id}
+              onChange={(e) => setForm({ ...form, student_id: e.target.value })}
+              className="w-full border-b border-white/10 bg-transparent py-3 text-sm focus:border-brand-lime focus:outline-none"
+            >
+              <option value="" className="bg-brand-dark">
+                Sem aluno
+              </option>
+              {alunos.map((a) => (
+                <option key={a.id} value={a.id} className="bg-brand-dark">
+                  {a.nome || a.email}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Tipo
+            </label>
+            <select
+              value={form.tipo}
+              onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+              className="w-full border-b border-white/10 bg-transparent py-3 text-sm focus:border-brand-lime focus:outline-none"
+            >
+              {["treino", "avaliação", "consultoria", "pessoal"].map((t) => (
+                <option key={t} value={t} className="bg-brand-dark">
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="md:col-span-2">
+            <Campo
+              label="Observações"
+              value={form.observacoes}
+              onChange={(v) => setForm({ ...form, observacoes: v })}
+            />
+          </div>
+        </div>
+        <button
+          onClick={() => form.titulo.trim() && criar.mutate()}
+          disabled={criar.isPending || !form.titulo.trim()}
+          className="mt-6 bg-brand-lime px-8 py-3 text-xs font-black uppercase tracking-widest text-brand-dark disabled:opacity-50"
+        >
+          {criar.isPending ? "Criando..." : "Criar compromisso"}
+        </button>
+      </section>
+
+      <section className="rounded-3xl border border-white/10 bg-brand-card p-8">
+        <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-lime">
+          Frequência dos alunos
+        </h2>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Marque a presença do dia selecionado ({fmtData(dia)}). O contador
+          mostra os treinos do mês.
+        </p>
+        <ul className="mt-6 space-y-3">
+          {alunos.length === 0 && (
+            <li className="text-sm text-muted-foreground">
+              Nenhum aluno ativo.
+            </li>
+          )}
+          {alunos.map((a) => {
+            const doMes = presencas.filter(
+              (p) => p.student_id === a.id && p.presente && p.data >= inicioMes,
+            ).length;
+            const registro = presencas.find(
+              (p) => p.student_id === a.id && p.data === dia,
+            );
+            return (
+              <li
+                key={a.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 p-4"
+              >
+                <div>
+                  <div className="text-sm font-bold">{a.nome || a.email}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {doMes} treino(s) no mês
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() =>
+                      marcar.mutate({ studentId: a.id, presente: true })
+                    }
+                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest ${
+                      registro?.presente
+                        ? "bg-brand-lime text-brand-dark"
+                        : "border border-white/15 text-muted-foreground hover:border-brand-lime"
+                    }`}
+                  >
+                    Presente
+                  </button>
+                  <button
+                    onClick={() =>
+                      marcar.mutate({ studentId: a.id, presente: false })
+                    }
+                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest ${
+                      registro && !registro.presente
+                        ? "bg-red-500/30 text-red-200"
+                        : "border border-white/15 text-muted-foreground hover:border-red-400"
+                    }`}
+                  >
+                    Faltou
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
+/* --------------------------- TREINOS PENDENTES --------------------------- */
+
+function PendentesView({
+  pendentes,
+  salvando,
+  onSalvar,
+}: {
+  pendentes: Profile[];
+  salvando: boolean;
+  onSalvar: (id: string, campos: Partial<Profile>) => void;
+}) {
+  const [aberto, setAberto] = useState<string | null>(null);
+  const atual = pendentes.find((p) => p.id === aberto) ?? null;
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-3xl border border-white/10 bg-brand-card p-8">
+        <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-lime">
+          Treinos pendentes
+        </h2>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Cada protocolo vale 2 meses. Ao salvar um novo treino, a validade é
+          renovada automaticamente.
+        </p>
+        <ul className="mt-6 space-y-3">
+          {pendentes.length === 0 && (
+            <li className="text-sm text-muted-foreground">
+              Nenhum protocolo vencido. Tudo em dia!
+            </li>
+          )}
+          {pendentes.map((a) => (
+            <li
+              key={a.id}
+              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-red-400/30 bg-red-500/5 p-4"
+            >
+              <div>
+                <div className="text-sm font-bold">{a.nome || a.email}</div>
+                <div className="text-xs text-muted-foreground">
+                  Último protocolo: {fmtData(a.treino_atualizado_em)} · Venceu
+                  em: {fmtData(a.protocolo_vence_em)}
+                </div>
+              </div>
+              <button
+                onClick={() => setAberto(aberto === a.id ? null : a.id)}
+                className="bg-brand-lime px-5 py-2 text-[10px] font-black uppercase tracking-widest text-brand-dark"
+              >
+                {aberto === a.id ? "Fechar" : "Montar novo protocolo"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {atual && (
+        <AlunoEditor
+          key={atual.id}
+          aluno={atual}
+          salvando={salvando}
+          onSalvar={(campos) => onSalvar(atual.id, campos)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ----------------------------- NOVOS ALUNOS ------------------------------ */
+
+function NovosView({
+  novos,
+  salvando,
+  onSituacao,
+  onPagamento,
+}: {
+  novos: Profile[];
+  salvando: boolean;
+  onSituacao: (id: string, situacao: string) => void;
+  onPagamento: (id: string, status: string) => void;
+}) {
+  return (
+    <section className="rounded-3xl border border-white/10 bg-brand-card p-8">
+      <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-brand-lime">
+        Novos alunos
+      </h2>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Quem cria conta fica aguardando. Confirme o pagamento e aceite o aluno
+        na sua cartela.
+      </p>
+      <ul className="mt-6 space-y-4">
+        {novos.length === 0 && (
+          <li className="text-sm text-muted-foreground">
+            Nenhum novo aluno aguardando.
+          </li>
+        )}
+        {novos.map((a) => (
+          <li key={a.id} className="rounded-2xl border border-white/10 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-sm font-bold">{a.nome || a.email}</div>
+                <div className="text-xs text-muted-foreground">{a.email}</div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {a.telefone || "sem WhatsApp"} ·{" "}
+                  {a.objetivo || "sem objetivo informado"}
+                </div>
+              </div>
+              <span
+                className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
                   a.status_pagamento === "pago"
                     ? "bg-brand-lime text-brand-dark"
                     : "border border-white/15 text-muted-foreground"
@@ -257,28 +787,41 @@ function AdminPanel() {
                 {a.status_pagamento}
               </span>
             </div>
-          </button>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                onClick={() => onPagamento(a.id, "pago")}
+                disabled={a.status_pagamento === "pago"}
+                className="border border-white/20 px-5 py-2 text-[10px] font-black uppercase tracking-widest transition-colors hover:bg-white/10 disabled:opacity-40"
+              >
+                Marcar pagamento
+              </button>
+              <button
+                onClick={() => onSituacao(a.id, "ativo")}
+                disabled={salvando || a.status_pagamento !== "pago"}
+                className="bg-brand-lime px-5 py-2 text-[10px] font-black uppercase tracking-widest text-brand-dark disabled:opacity-40"
+              >
+                Aceitar na cartela
+              </button>
+              <button
+                onClick={() => onSituacao(a.id, "recusado")}
+                disabled={salvando}
+                className="border border-red-400/40 px-5 py-2 text-[10px] font-black uppercase tracking-widest text-red-300 hover:bg-red-500/10 disabled:opacity-40"
+              >
+                Recusar
+              </button>
+            </div>
+            {a.situacao === "recusado" && (
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-red-300">
+                Recusado
+              </p>
+            )}
+          </li>
         ))}
-      </div>
-
-      <div>
-        {atual ? (
-          <AlunoEditor
-            key={atual.id}
-            aluno={atual}
-            salvando={salvar.isPending}
-            onSalvar={(campos) => salvar.mutate({ id: atual.id, ...campos })}
-          />
-        ) : (
-          <p className="rounded-3xl border border-white/10 bg-brand-card p-8 text-sm text-muted-foreground">
-            Selecione um aluno para ver e editar plano, pagamento, treino e
-            anotações.
-          </p>
-        )}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
+
 
 function AlunoEditor({
   aluno,
