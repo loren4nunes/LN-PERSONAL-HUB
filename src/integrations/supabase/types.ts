@@ -14,47 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          created_at: string
+          fim: string | null
+          id: string
+          inicio: string
+          observacoes: string | null
+          student_id: string | null
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          created_at?: string
+          fim?: string | null
+          id?: string
+          inicio: string
+          observacoes?: string | null
+          student_id?: string | null
+          tipo?: string
+          titulo: string
+        }
+        Update: {
+          created_at?: string
+          fim?: string | null
+          id?: string
+          inicio?: string
+          observacoes?: string | null
+          student_id?: string | null
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+          observacao: string | null
+          presente: boolean
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          id?: string
+          observacao?: string | null
+          presente?: boolean
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+          observacao?: string | null
+          presente?: boolean
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          aprovado_em: string | null
           created_at: string
           email: string
           id: string
           nome: string
           objetivo: string | null
           plano: string | null
+          protocolo_vence_em: string | null
+          situacao: string
           status_pagamento: string
           telefone: string | null
           treino: string | null
+          treino_atualizado_em: string | null
           treino_link: string | null
           updated_at: string
           valor: number | null
           vencimento: string | null
         }
         Insert: {
+          aprovado_em?: string | null
           created_at?: string
           email?: string
           id: string
           nome?: string
           objetivo?: string | null
           plano?: string | null
+          protocolo_vence_em?: string | null
+          situacao?: string
           status_pagamento?: string
           telefone?: string | null
           treino?: string | null
+          treino_atualizado_em?: string | null
           treino_link?: string | null
           updated_at?: string
           valor?: number | null
           vencimento?: string | null
         }
         Update: {
+          aprovado_em?: string | null
           created_at?: string
           email?: string
           id?: string
           nome?: string
           objetivo?: string | null
           plano?: string | null
+          protocolo_vence_em?: string | null
+          situacao?: string
           status_pagamento?: string
           telefone?: string | null
           treino?: string | null
+          treino_atualizado_em?: string | null
           treino_link?: string | null
           updated_at?: string
           valor?: number | null
