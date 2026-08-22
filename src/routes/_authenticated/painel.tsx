@@ -41,7 +41,45 @@ type Profile = {
   status_pagamento: string;
   treino: string | null;
   treino_link: string | null;
+  situacao: string;
+  aprovado_em: string | null;
+  treino_atualizado_em: string | null;
+  protocolo_vence_em: string | null;
 };
+
+type Appointment = {
+  id: string;
+  student_id: string | null;
+  titulo: string;
+  tipo: string;
+  inicio: string;
+  fim: string | null;
+  observacoes: string | null;
+};
+
+type Attendance = {
+  id: string;
+  student_id: string;
+  data: string;
+  presente: boolean;
+  observacao: string | null;
+};
+
+const hoje = () => new Date().toISOString().slice(0, 10);
+
+function addMeses(dateStr: string, meses: number) {
+  const d = new Date(`${dateStr}T12:00:00`);
+  d.setMonth(d.getMonth() + meses);
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtData(d: string | null) {
+  if (!d) return "—";
+  return new Date(d.length > 10 ? d : `${d}T12:00:00`).toLocaleDateString(
+    "pt-BR",
+  );
+}
+
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
